@@ -19,78 +19,78 @@ const App = () => {
   const configureSeats = () => {
     const labelInput = prompt('Masukkan Label Kursi (contoh: A)');
     if (labelInput === null) {
-      return; // User clicked cancel
+      return;
     }
-  
+
     const label = labelInput.toUpperCase();
-  
+
     const numberOfSeatsInput = prompt('Masukkan Jumlah Kursi (max 20)');
     if (numberOfSeatsInput === null) {
-      return; // User clicked cancel
+      return;
     }
-  
+
     const numberOfSeats = parseInt(numberOfSeatsInput, 10);
-  
+
     if (numberOfSeats > 20 || isNaN(numberOfSeats) || numberOfSeats <= 0) {
       alert('Jumlah kursi tidak valid. Harap masukkan jumlah kursi antara 1 dan 20.');
       return;
     }
-  
+
     const newSeats = Array.from({ length: numberOfSeats }, (_, index) => ({
       code: `${label}${index + 1}`,
       status: 'Free',
     }));
-  
+
     setSeats(newSeats);
     setOutput(`=================== Aplikasi Cinema XXI Layout (kursi tersedia ${label}-${numberOfSeats}) ===================`);
     alert(`Kursi berhasil dikonfigurasi:
       - Label Kursi: ${label}
       - Jumlah Kursi: ${numberOfSeats}`);
   };
-  
+
   const bookSeat = (seatCode) => {
     const selectedSeat = seats.find((seat) => seat.code === seatCode);
-  
+
     if (!selectedSeat || selectedSeat.status !== 'Free') {
       alert(`Kursi ${seatCode} tidak tersedia atau sudah dipesan.`);
       return;
     }
-  
+
     const updatedSeats = seats.map((seat) =>
       seat.code === seatCode ? { ...seat, status: 'Sold' } : seat
     );
-  
+
     setSeats(updatedSeats);
-  
+
     const transaction = { seatCode, datetime: getCurrentDateTime() };
     setTransactions([...transactions, transaction]);
-  
+
     displaySeatsStatus();
     displayTransactionStatus();
-  
+
     alert(`Kursi ${seatCode} berhasil dipesan!`);
   };
-  
+
   const cancelSeat = (seatCode) => {
     const selectedSeat = seats.find((seat) => seat.code === seatCode);
-  
+
     if (!selectedSeat || selectedSeat.status !== 'Sold') {
       alert(`Kursi ${seatCode} tidak dapat dibatalkan karena belum dipesan atau sudah dibatalkan sebelumnya.`);
       return;
     }
-  
+
     const updatedSeats = seats.map((seat) =>
       seat.code === seatCode ? { ...seat, status: 'Free' } : seat
     );
-  
+
     setSeats(updatedSeats);
-  
+
     displaySeatsStatus();
     displayTransactionStatus();
-  
+
     alert(`Pembatalan kursi ${seatCode} berhasil!`);
   };
-  
+
   const displaySeatsStatus = () => {
     const seatsStatus = seats.map((seat) => `${seat.code} - ${seat.status}`);
     const seatsStatusOutput = `${seatsStatus.join('\n')}`;
@@ -125,7 +125,6 @@ const App = () => {
       Masukkan pilihan menu
     `);
 
-    // Check if the user clicked cancel or did not provide any input
     if (userInput === null || userInput.trim() === '') {
       return;
     }
@@ -160,23 +159,23 @@ const App = () => {
   };
 
   return (
-<div className="wrapper">
-  <div className="container">
-  <h1 style={{ color: '#006563', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-  Selamat Datang
-  <img
-    src="https://21cineplex.com//theme/v5/assets/img/logo.png"
-    alt="Cinema XXI Logo"
-    style={{ width: '180px', height: 'auto', marginLeft: '10px' }}
-  />
-</h1>
-    <SeatConfiguration onConfigureSeats={handleConfigureSeats} />
-    <div className="seat-info">
-      <AppContent seats={seats} onSeatClick={bookSeat} output={output} />
+    <div className="wrapper">
+      <div className="container">
+        <h1 style={{ color: '#006563', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          Selamat Datang
+          <img
+            src="https://21cineplex.com//theme/v5/assets/img/logo.png"
+            alt="Cinema XXI Logo"
+            style={{ width: '180px', height: 'auto', marginLeft: '10px' }}
+          />
+        </h1>
+        <SeatConfiguration onConfigureSeats={handleConfigureSeats} />
+        <div className="seat-info">
+          <AppContent seats={seats} onSeatClick={bookSeat} output={output} />
+        </div>
+        <MenuHandler onMenuHandler={handleMenuHandler} />
+      </div>
     </div>
-    <MenuHandler onMenuHandler={handleMenuHandler} />
-  </div>
-</div>
 
   );
 };
